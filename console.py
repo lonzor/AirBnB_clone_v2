@@ -41,7 +41,7 @@ class HBNBCommand(cmd.Cmd):
         Usage: <class name>.<command>([<id> [<*args> or <**kwargs>]])
         (Brackets denote optional fields in usage example.)
         """
-        _cmd = _cls = _id = _args = ''  # initialize line elements
+        _cmd = _cls = _id = _args = ''  # initialize line elements          This line is probably superfluous
 
         # scan for general formating - i.e '.', '(', ')'
         if not ('.' in line and '(' in line and ')' in line):
@@ -115,16 +115,26 @@ class HBNBCommand(cmd.Cmd):
 
     def do_create(self, args):
         """ Create an object of any class"""
+
+        args_lst = args.split(" ")
         if not args:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
+        args_lst = args.split(" ")
+        if args_lst[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[args]()
+        new_instance = HBNBCommand.classes[args_lst[0]]()
         storage.save()
         print(new_instance.id)
-        storage.save()
+#       storage.save()
+        i = 1
+        while (i < len(args_lst)):
+            params = args_lst[i].split("=")
+            params[1] = params[1].replace("_", " ")
+            self.do_update(args_lst[0] + " " + new_instance.id +
+                           " " + params[0] + " " + params[1])
+            i += 1
 
     def help_create(self):
         """ Help information for the create method """
