@@ -37,9 +37,7 @@ class FileStorage:
             return FileStorage.__objects
         else:
             tmp_dic = {}
-            tmp_list = str(cls).split(".")
-            cls_name = tmp_list[2]
-            cls_name = cls_name[:-2]
+            cls_name = cls.__name__
             for key in FileStorage.__objects:
                 if cls_name in key:
                     tmp_dic[key] = FileStorage.__objects[key]
