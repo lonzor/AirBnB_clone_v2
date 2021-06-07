@@ -6,7 +6,9 @@
 import sys
 import os
 from sqlalchemy import (create_engine)
-from models.base_model import BaseModel
+from sqlalchemy.orm import scoped_session
+from sqlalchemy.orm import sessionmaker
+from models.base_model import BaseModel, Base
 from models.user import User
 from models.place import Place
 from models.state import State
@@ -26,19 +28,39 @@ class DBStorage:
             'mysql+mysqldb://{}:{}@{}/{}'.format(os.getenv('HBNB_MYSQL_USER'),
                                                  os.getenv('HBNB_MYSQL_PWD'),
                                                  os.getenv('HBNB_MYSQL_HOST'),
-                                                 os.getenv('HBNB_MYSQL_DB'),
+                                                 os.getenv('HBNB_MYSQL_DB')),
             pool_pre_ping=True)
 
-        Session = sessionmaker(bind=engine)
-
-        self.__session = Session()
-
         if os.getenv('HBNB_ENV') == 'test':
-            self.__session.drop_all()
+            drop_all(self.__session)
 
     def all(self, cls=None):
+        cls_list = [State, City]#, Amenity, Place, Review, User]
+        tmp_dic = {}
         if cls:
             data = self.__session.query(cls)
+            for inst in data:
+                tmp_dic[cls.__name__ + "." + inst.id] = inst
         else:
-            data = self.__session.query(User, State, City, Amenity, Place, Review)
+            i = 0
+            while i < len(cls_list):
+                for inst in self.__session.query(cls_list[i]):
+                    tmp_dic[type(inst).__name__ + "." + inst.id] = inst
+                i += 1
+        return tmp_dic
 
+    def new(self, obj):
+            self.__session.add(obj)
+
+    def save(self):
+            self.__session.commit()
+
+    def delete(self, obj=None):
+            if obj:
+                self.__session.delete(obj)
+
+    def reload(self):
+            Base.metadata.create_all(self.__engine)
+            new_session = sessionmaker(bind=self.__engine, expire_on_commit=False)
+            Session = scoped_session(new_session)
+            self.__session = Session()
