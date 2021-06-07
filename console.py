@@ -129,6 +129,8 @@ class HBNBCommand(cmd.Cmd):
         while (i < len(args_lst)):
             params = args_lst[i].split("=")
             params[1] = params[1].replace("_", " ")
+            if params[1][0] == '"':
+                params[1] = params[1][1:-1]
             setattr(new_instance, params[0], params[1])
             i += 1
         new_instance.save()
@@ -163,7 +165,7 @@ class HBNBCommand(cmd.Cmd):
 
         key = c_name + "." + c_id
         try:
-            print(storage._FileStorage__objects[key])
+            print(models.storage.all()[key])
         except KeyError:
             print("** no instance found **")
 
