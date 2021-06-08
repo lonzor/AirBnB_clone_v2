@@ -11,13 +11,14 @@ from models.review import Review
 
 
 classes = {
-            'BaseModel': BaseModel, 'User': User, 'Place': Place,
-            'State': State, 'City': City, 'Amenity': Amenity,
-            'Review': Review
-            }
+    'BaseModel': BaseModel, 'User': User, 'Place': Place,
+    'State': State, 'City': City, 'Amenity': Amenity,
+    'Review': Review
+}
 
 
 class FileStorage:
+
     """This class manages storage of hbnb models in JSON format"""
     __file_path = 'file.json'
     __objects = {}
@@ -29,7 +30,6 @@ class FileStorage:
             key = type(obj).__name__ + "." + obj.id
             del FileStorage.__objects[key]
             del obj
-
 
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
