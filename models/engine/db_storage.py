@@ -18,7 +18,6 @@ from models.review import Review
 
 
 class DBStorage:
-
     """The mysql database storage engine"""
 
     __engine = None
@@ -36,17 +35,18 @@ class DBStorage:
             drop_all(self.__session)
 
     def all(self, cls=None):
+        cls_list = [User, State, City, Place, Review]#, Amenity]
         tmp_dic = {}
         if cls:
             data = self.__session.query(cls)
             for inst in data:
                 tmp_dic[cls.__name__ + "." + inst.id] = inst
         else:
-            data = self.__session.query(State, User, City,
-                                        Place, Review)  # Amenity)
-            for tup in data:
-                for inst in tup:
+            i = 0
+            while i < len(cls_list):
+                for inst in self.__session.query(cls_list[i]):
                     tmp_dic[type(inst).__name__ + "." + inst.id] = inst
+                i += 1
         return tmp_dic
 
     def new(self, obj):
@@ -61,7 +61,6 @@ class DBStorage:
 
     def reload(self):
             Base.metadata.create_all(self.__engine)
-            new_session = sessionmaker(bind=self.__engine,
-                                       expire_on_commit=False)
+            new_session = sessionmaker(bind=self.__engine, expire_on_commit=False)
             Session = scoped_session(new_session)
             self.__session = Session()
