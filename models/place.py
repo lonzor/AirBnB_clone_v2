@@ -4,14 +4,13 @@ from models.base_model import BaseModel, Base
 from models.review import Review
 from sqlalchemy import Column, Integer, String, ForeignKey, Float, Table
 from sqlalchemy.orm import relationship
-from models.amenity import Amenity
 
 
 place_amenity = Table("place_amenity", Base.metadata,
-                     Column("place_id", String(60), ForeignKey
-                         ("places.id"), primary_key=True, nullable=False),
-                     Column("amenity_id", String(60), ForeignKey
-                         ("amenities.id"), primary_key=True, nullable=False))
+                      Column("place_id", String(60), ForeignKey("places.id"),
+                             primary_key=True,),
+                      Column("amenity_id", String(60), ForeignKey("amenities.id"),
+                             primary_key=True))
 
 class Place(BaseModel, Base):
     """ A place to stay """
@@ -27,16 +26,18 @@ class Place(BaseModel, Base):
     latitude = Column(Float, nullable=True)
     longitude = Column(Float, nullable=True)
     reviews = relationship("Review", backref="place",
-                           cascade="all, delete-orphan")
+                           cascade="all, delete")
     amenities = relationship("Amenity", secondary=place_amenity,
-                             viewonly=False)
+                             viewonly=False, backref="place_amenities")
     amenity_ids = []
 
     @property
     def reviews(self):
         """getter for reviews"""
+        from models.review import Review
+        from models import storage
         review_list = []
-        tmp_dic = models.storage.all(Review)
+        tmp_dic = storage.all(Review)
         for key in tmp_dic:
             if tmp_dic[key].place_id == self.id:
                 review_list.append(tmp_dic[key])
@@ -45,9 +46,11 @@ class Place(BaseModel, Base):
     @property
     def amenities(self):
         """ getter for amenities """
-        tmp_dic = models.storage.all(Amenity)
+        from models.amenity import Amenity
+        from models import storage
+        tmp_dic = storage.all(Amenity)
         for key in tmp_dic:
-            if tmp_dic[key].place_id == self.id:
+            if tmp_dic[key].place_amenity == self.id:
                 self.amenity_ids.append(tmp_dic[key])
         return self.amenity_ids
 

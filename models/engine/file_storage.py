@@ -1,20 +1,6 @@
 #!/usr/bin/python3
 """This module defines a class to manage file storage for hbnb clone"""
 import json
-from models.base_model import BaseModel
-from models.user import User
-from models.place import Place
-from models.state import State
-from models.city import City
-from models.amenity import Amenity
-from models.review import Review
-
-
-classes = {
-            'BaseModel': BaseModel, 'User': User, 'Place': Place,
-            'State': State, 'City': City, 'Amenity': Amenity,
-            'Review': Review
-            }
 
 
 class FileStorage:
@@ -26,10 +12,9 @@ class FileStorage:
         """Deletes an object from __objects if it exists"""
 
         if obj:
-            key = type(obj).__name__ + "." + obj.id
-            del FileStorage.__objects[key]
-            del obj
-
+            for key in FileStorage.__objects.keys():
+                if obj.id in key:
+                    del FileStorage.__objects[key]
 
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
@@ -38,9 +23,9 @@ class FileStorage:
         else:
             tmp_dic = {}
             cls_name = cls.__name__
-            for key in FileStorage.__objects:
+            for key in self.__objects.keys():
                 if cls_name in key:
-                    tmp_dic[key] = FileStorage.__objects[key]
+                    tmp_dic[key] = self.__objects[key]
             return tmp_dic
 
     def new(self, obj):
@@ -58,6 +43,20 @@ class FileStorage:
 
     def reload(self):
         """Loads storage dictionary from file"""
+        from models.base_model import BaseModel
+        from models.user import User
+        from models.place import Place
+        from models.state import State
+        from models.city import City
+        from models.amenity import Amenity
+        from models.review import Review
+
+
+        classes = {
+                    'BaseModel': BaseModel, 'User': User, 'Place': Place,
+                    'State': State, 'City': City, 'Amenity': Amenity,
+                    'Review': Review
+                  }
 
         try:
             temp = {}
