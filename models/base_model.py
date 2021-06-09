@@ -5,16 +5,15 @@ from datetime import datetime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, ForeignKey, DateTime
 from sqlalchemy.orm import relationship
-import models
 
 
 Base = declarative_base()
 
 
-class BaseModel:
+class BaseModel():
     """A base class for all hbnb models"""
 
-    id = Column(String(60), primary_key=True, nullable=False)
+    id = Column(String(60), unique=True, primary_key=True, nullable=False)
     created_at = Column(DateTime, default=datetime.utcnow(), nullable=False)
     updated_at = Column(DateTime, default=datetime.utcnow(), nullable=False)
 
@@ -23,12 +22,15 @@ class BaseModel:
         self.id = str(uuid.uuid4())
         self.created_at = datetime.now()
         self.updated_at = datetime.now()
-        if kwargs:
+        if len(kwargs) > 0:
             kwargs['updated_at'] = datetime.strptime(kwargs['updated_at'],
                                                      '%Y-%m-%dT%H:%M:%S.%f')
             kwargs['created_at'] = datetime.strptime(kwargs['created_at'],
                                                      '%Y-%m-%dT%H:%M:%S.%f')
-            del kwargs['__class__']
+            try:
+                del kwargs['__class__']
+            except:
+                pass
             self.__dict__.update(kwargs)
 
     def __str__(self):
@@ -38,9 +40,10 @@ class BaseModel:
 
     def save(self):
         """Updates updated_at with current time when instance is changed"""
+        from models import storage
         self.updated_at = datetime.now()
-        models.storage.new(self)
-        models.storage.save()
+        storage.new(self)
+        storage.save()
 
     def to_dict(self):
         """Convert instance into dict format"""
@@ -58,4 +61,5 @@ class BaseModel:
 
     def delete(self):
         """Delete instance from storage engine"""
-        models.storage.delete(self)
+        from models import storage
+        storage.delete(self)

@@ -8,6 +8,7 @@ import os
 from sqlalchemy import (create_engine)
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
+from sqlalchemy.orm.session import Session
 from models.base_model import BaseModel, Base
 from models.user import User
 from models.place import Place
