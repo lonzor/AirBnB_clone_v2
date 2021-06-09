@@ -33,7 +33,7 @@ class DBStorage:
             pool_pre_ping=True)
 
         if os.getenv('HBNB_ENV') == 'test':
-            drop_all(self.__session)
+            Base.metadata.drop_all(bind=self.__engine)
 
     def all(self, cls=None):
         cls_list = [State, City, Place, Review, User, Amenity]
