@@ -3,6 +3,7 @@
 import unittest
 import sys
 import os
+from os import environ
 from io import StringIO
 from models.base_model import BaseModel
 from models import storage
@@ -16,6 +17,7 @@ from unittest.mock import patch
 from console import HBNBCommand
 
 
+@unittest.skipIf(environ.get('HBNB_TYPE_STORAGE') != 'db', "Db only")
 class test_db_storage(unittest.TestCase):
 
     """Class for testing db_storage"""
