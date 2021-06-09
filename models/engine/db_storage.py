@@ -37,15 +37,16 @@ class DBStorage:
 
     def all(self, cls=None):
         tmp_dic = {}
-        class_lst = [State, User, City, Place, Review]  # Amenity]
         if cls:
             data = self.__session.query(cls)
             for inst in data:
                 tmp_dic[cls.__name__ + "." + inst.id] = inst
         else:
-            for obj in class_lst:
-                for inst in self.__session.query(obj):
-                    tmp_dic[type(obj).__name__ + "." + inst.id] = inst
+            data = self.__session.query(State, User, City,
+                                        Place, Review)  # Amenity)
+            for tup in data:
+                for inst in tup:
+                    tmp_dic[type(inst).__name__ + "." + inst.id] = inst
         return tmp_dic
 
     def new(self, obj):
