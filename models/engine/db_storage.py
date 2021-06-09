@@ -35,7 +35,7 @@ class DBStorage:
             drop_all(self.__session)
 
     def all(self, cls=None):
-        cls_list = [User, State, City, Place, Review]#, Amenity]
+        cls_list = [State, City]#, Amenity, Place, Review, User]
         tmp_dic = {}
         if cls:
             data = self.__session.query(cls)
