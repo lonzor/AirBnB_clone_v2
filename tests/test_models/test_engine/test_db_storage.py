@@ -28,7 +28,7 @@ class test_db_storage(unittest.TestCase):
             state = state[:-1]
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd(
-                "create City state_id='{}'".format(state) +
+                "create City state_id={}".format(state) +
                 " name='San_Francisco_is_super_cool'")
             city = f.getvalue()
             city = city[:-1]
@@ -40,7 +40,7 @@ class test_db_storage(unittest.TestCase):
             user = user[:-1]
         with patch('sys.stdout', new=StringIO()) as f:
             HBNBCommand().onecmd(
-                "create Place city_id='{}' user_id='{}' ".format(city, user) +
+                "create Place city_id={} user_id={} ".format(city, user) +
                 "name='My_mansion' description='no_description_yet' " +
                 "number_rooms=4 number_bathrooms=1 max_guest=3 " +
                 "price_by_night=100 latitude=120.12 longitude=101.4")
