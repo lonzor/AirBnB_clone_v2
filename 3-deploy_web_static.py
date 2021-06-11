@@ -4,7 +4,7 @@
 
 from fabric.api import local, env, put, run
 from datetime import datetime
-import os
+import os.path
 
 
 env.hosts = ['3.84.179.220', '54.226.50.222']
@@ -29,17 +29,16 @@ def do_deploy(archive_path):
     try:
         archiveName = archive_path[9:]
         archNameNoExt = archiveName[:-4]
-        tarcmd = "tar -xzvf /tmp/" + archiveName + " -C "
+        tarcmd = "sudo tar -xzvf /tmp/" + archiveName + " -C "
         datarel = "/data/web_static/releases/"
         datacur = "/data/web_static/current"
 
-        print(archive_path, '/tmp/' + archiveName)
         put(archive_path, '/tmp/' + archiveName)
-        run("mkdir -p " + datarel + archNameNoExt)
+        run("sudo mkdir -p " + datarel + archNameNoExt)
         run(tarcmd + datarel + archNameNoExt + " --strip-components=1")
-        run("rm -f /tmp/" + archiveName)
-        run("rm -f /data/web_static/current")
-        run("sudo ln -sf " + datarel + archNameNoExt + datacur)
+        run("sudo rm -f /tmp/" + archiveName)
+        run("sudo rm -f " + datacur)
+        run("sudo ln -sf " + datarel + archNameNoExt + " " + datacur)
         return True
     except:
         return False
