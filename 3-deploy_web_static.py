@@ -11,6 +11,8 @@ env.hosts = ['3.84.179.220', '54.226.50.222']
 
 
 def deploy():
+    """ Runs the full deploy """
+
     archive = do_pack()
     if not archive:
         return False
