@@ -9,6 +9,7 @@ import os
 
 env.hosts = ['3.84.179.220', '54.226.50.222']
 
+
 def deploy():
     archive = do_pack()
     if not archive:
