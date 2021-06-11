@@ -21,7 +21,6 @@ def deploy():
 
     return status
 
-
 def do_deploy(archive_path):
     """ Deploy an archive """
 
@@ -30,16 +29,17 @@ def do_deploy(archive_path):
     try:
         archiveName = archive_path[9:]
         archNameNoExt = archiveName[:-4]
+        tarcmd = "tar -xzvf /tmp/" + archiveName + " -C "
+        datarel = "/data/web_static/releases/"
+        datacur = "/data/web_static/current"
 
-        put(arhive_path, '/tmp/' + archiveName)
-        run("mkdir -p /data/web_static/releases/" + archNameNoExt)
-        run("tar -xzvf /tmp/" + archiveName + " -C " +
-            "/data/web_static/releases/" + archNameNoExt +
-            " --strip-components=1")
+        print(archive_path, '/tmp/' + archiveName)
+        put(archive_path, '/tmp/' + archiveName)
+        run("mkdir -p " + datarel + archNameNoExt)
+        run(tarcmd + datarel + archNameNoExt + " --strip-components=1")
         run("rm -f /tmp/" + archiveName)
         run("rm -f /data/web_static/current")
-        run("sudo ln -sf /data/web_static/releases/" +
-            archNameNoExt + "/data/web_static/current")
+        run("sudo ln -sf " + datarel + archNameNoExt + datacur)
         return True
     except:
         return False
