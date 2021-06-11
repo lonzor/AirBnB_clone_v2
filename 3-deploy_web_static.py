@@ -21,6 +21,7 @@ def deploy():
 
     return status
 
+
 def do_deploy(archive_path):
     """ Deploy an archive """
 
