@@ -24,6 +24,7 @@ def deploy():
     status = do_deploy(archive)
     return status
 
+
 def do_deploy(archive_path):
     """ Deploys the archive """
 
@@ -48,6 +49,7 @@ def do_deploy(archive_path):
         return True
     except:
         return False
+
 
 def do_pack():
     """packs up all files web_static"""
