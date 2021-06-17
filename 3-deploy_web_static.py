@@ -1,8 +1,12 @@
 #!/usr/bin/python3
-""" Module connecting web server to python """
+"""
+Module to connect python backend to web server
+Packs up web_static
+Deploys archive
+"""
 
 
-from fabric.ap import local, env, put, run
+from fabric.api import local, env, put, run
 from datetime import datetime
 import os
 
@@ -20,23 +24,27 @@ def deploy():
     status = do_deploy(archive)
     return status
 
-def do_deploy():
+def do_deploy(archive_path):
     """ Deploys the archive """
 
     if not os.path.exists(archive_path):
         return False
+
     try:
-        archName = archive_path[9:]
-        archNameNoExt = archName[:-4]
-        tarCmnd = "sudo tar -xzvf /tmp/" + archName + " -C "
+        arch_name = archive_path[9:]
+        name_no_ext = arch_name[:-4]
+
+        tar_cmnd = "tar -xzvf /tmp/" + arch_name + " -C "
         rel_dir = "/data/web_static/releases/"
-        cur_dir = "/data/web_static/current/"
-        put(archive_path, '/tmp/' + archName)
-        run("sudo mkdir -p " + rel_dir + archNameNoExt)
-        run(tarCmnd + rel_dir + archNameNoExt + " --strip-components=1")
-        run("sudo rm -f /tmp/" + archName)
-        run("sudo rm -f " + cur_dir)
-        run("sudo ln -sf " + rel_dir + archNameNoExt + " " + cur_dir)
+        cur_dir = "/data/web_static/current"
+
+        put(archive_path, '/tmp/' + arch_name)
+
+        run("mkdir -p " + rel_dir + name_no_ext)
+        run(tar_cmnd + rel_dir + name_no_ext + " --strip-components=1")
+        run("rm -f /tmp/" + arch_name)
+        run("rm -f " + cur_dir)
+        run("ln -sf " + rel_dir + name_no_ext + " " + cur_dir)
         return True
     except:
         return False
@@ -45,10 +53,10 @@ def do_pack():
     """packs up all files web_static"""
     try:
         now = datetime.now()
-        taName = "web_static_" + now.strftime("%Y%m%d%H%M%S") + ".tgz"
-        taPath = "versions/" + taName
+        ta_name = "web_static_" + now.strftime("%Y%m%d%H%M%S") + ".tgz"
+        ta_path = "versions/" + ta_name
         local("mkdir -p versions")
-        local("tar -czvf " + taPath + "web_static")
-        return taPath
+        local("tar -czvf " + ta_path + " web_static")
+        return ta_path
     except:
         return None
