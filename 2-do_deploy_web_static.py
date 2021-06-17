@@ -29,7 +29,7 @@ def do_deploy(archive_path):
         cur_dir = "/data/web_static/current"
 
         put(archive_path, '/tmp/' + arch_name)
-        
+
         run("mkdir -p " + rel_dir + name_no_ext)
         run(tar_cmnd + rel_dir + name_no_ext + " --strip-components=1")
         run("rm -f /tmp/" + arch_name)
