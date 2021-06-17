@@ -1,5 +1,9 @@
 #!/usr/bin/python3
-""" A module that connects web server to python backend """
+"""
+Module to connect python backend to web server
+Packs up web_static
+Deploys archive
+"""
 
 
 from fabric.api import local, env, put, run
@@ -20,17 +24,17 @@ def do_deploy(archive_path):
         arch_name = archive_path[9:]
         name_no_ext = arch_name[:-4]
 
-        tar_cmnd = "sudo tar -xzvf /tmp/" + arch_name + " -C "
+        tar_cmnd = "tar -xzvf /tmp/" + arch_name + " -C "
         rel_dir = "/data/web_static/releases/"
-        cur_dir = "/data/web_static/current/"
+        cur_dir = "/data/web_static/current"
 
         put(archive_path, '/tmp/' + arch_name)
-
-        run("sudo mkdir -p " + rel_dir + name_no_ext)
+        
+        run("mkdir -p " + rel_dir + name_no_ext)
         run(tar_cmnd + rel_dir + name_no_ext + " --strip-components=1")
-        run("sudo rm -f /tmp/" + arch_name)
-        run("sudo rm -f " + cur_dir)
-        run("sudo ln -sf " + rel_dir + name_no_ext + " " + cur_dir)
+        run("rm -f /tmp/" + arch_name)
+        run("rm -f " + cur_dir)
+        run("ln -sf " + rel_dir + name_no_ext + " " + cur_dir)
         return True
     except:
         return False
