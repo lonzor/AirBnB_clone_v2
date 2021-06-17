@@ -10,18 +10,22 @@ import os
 env.hosts = ['35.237.103.166', '3.88.182.73']
 
 
-def do_deploy():
+def do_deploy(archive_path):
     """ Deploys the archive """
 
     if not os.path.exists(archive_path):
         return False
+
     try:
         arch_name = archive_path[9:]
         name_no_ext = arch_name[:-4]
+
         tar_cmnd = "sudo tar -xzvf /tmp/" + arch_name + " -C "
         rel_dir = "/data/web_static/releases/"
         cur_dir = "/data/web_static/current/"
+
         put(archive_path, '/tmp/' + arch_name)
+
         run("sudo mkdir -p " + rel_dir + name_no_ext)
         run(tar_cmnd + rel_dir + name_no_ext + " --strip-components=1")
         run("sudo rm -f /tmp/" + arch_name)
