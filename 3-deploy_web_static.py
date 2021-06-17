@@ -1,62 +1,54 @@
 #!/usr/bin/python3
-""" A module that connects web server to python backend """
+""" Module connecting web server to python """
 
 
-from fabric.api import local, env, put, run
+from fabric.ap import local, env, put, run
 from datetime import datetime
-import os.path
+import os
 
 
-env.hosts = ['3.84.179.220', '54.226.50.222']
+env.hosts = ['35.237.103.166', '3.88.182.73']
 
 
 def deploy():
-    """ Runs the full deploy """
+    """ Runs the deploy """
 
     archive = do_pack()
-    if not archive:
+    if archive is None:
         return False
 
     status = do_deploy(archive)
-
     return status
 
-
-def do_deploy(archive_path):
-    """ Deploy an archive """
+def do_deploy():
+    """ Deploys the archive """
 
     if not os.path.exists(archive_path):
-            return False
+        return False
     try:
-        archiveName = archive_path[9:]
-        archNameNoExt = archiveName[:-4]
-        tarcmd = "sudo tar -xzvf /tmp/" + archiveName + " -C "
-        datarel = "/data/web_static/releases/"
-        datacur = "/data/web_static/current"
-
-        put(archive_path, '/tmp/' + archiveName)
-        run("sudo mkdir -p " + datarel + archNameNoExt)
-        run(tarcmd + datarel + archNameNoExt + " --strip-components=1")
-        run("sudo rm -f /tmp/" + archiveName)
-        run("sudo rm -f " + datacur)
-        run("sudo ln -sf " + datarel + archNameNoExt + " " + datacur)
+        archName = archive_path[9:]
+        archNameNoExt = archName[:-4]
+        tarCmnd = "sudo tar -xzvf /tmp/" + archName + " -C "
+        rel_dir = "/data/web_static/releases/"
+        cur_dir = "/data/web_static/current/"
+        put(archive_path, '/tmp/' + archName)
+        run("sudo mkdir -p " + rel_dir + archNameNoExt)
+        run(tarCmnd + rel_dir + archNameNoExt + " --strip-components=1")
+        run("sudo rm -f /tmp/" + archName)
+        run("sudo rm -f " + cur_dir)
+        run("sudo ln -sf " + rel_dir + archNameNoExt + " " + cur_dir)
         return True
     except:
         return False
 
-
 def do_pack():
-    """ Pack up our web_static """
-
+    """packs up all files web_static"""
     try:
         now = datetime.now()
-
-        tarArchiveName = "web_static_" + now.strftime("%Y%m%d%H%M%S") + ".tgz"
-        tarArchivePath = "versions/" + tarArchiveName
-
+        taName = "web_static_" + now.strftime("%Y%m%d%H%M%S") + ".tgz"
+        taPath = "versions/" + taName
         local("mkdir -p versions")
-        local("tar -czvf " + tarArchivePath + " web_static")
-
-        return tarArchivePath
+        local("tar -czvf " + taPath + "web_static")
+        return taPath
     except:
         return None
