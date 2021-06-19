@@ -60,6 +60,10 @@ class DBStorage:
             if obj:
                 self.__session.delete(obj)
 
+    def close(self):
+        """Close session"""
+        self.__session.close()
+
     def reload(self):
             Base.metadata.create_all(self.__engine)
             new_session = sessionmaker(bind=self.__engine,
