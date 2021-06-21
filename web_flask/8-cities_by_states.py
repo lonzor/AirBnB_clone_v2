@@ -18,9 +18,9 @@ def list_cities():
     states = storage.all(State)
     sorted_states = sorted(states.values(), key=lambda x: x.name)
     cities = storage.all(City)
-    cities_sort = sorted(cities.values(), key=lambda x: x.name)
+    sorted_cities = sorted(cities.values(), key=lambda x: x.name)
     return render_template('8-cities_by_states.html', state=sorted_states,
-                           city=cities_sort)
+                           city=sorted_cities)
 
 
 @app.teardown_appcontext
